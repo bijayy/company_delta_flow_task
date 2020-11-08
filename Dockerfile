@@ -6,20 +6,19 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-nanoserver-1903 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-1903 AS build
 WORKDIR /src
-COPY ["company_delta_flow_task.csproj", ""]
-RUN dotnet restore "./company_delta_flow_task.csproj"
+COPY ["company_delta_flow_task_blazor.csproj", ""]
+RUN dotnet restore "./company_delta_flow_task_blazor.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "company_delta_flow_task.csproj" -c Release -o /app/build
+RUN dotnet build "company_delta_flow_task_blazor.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "company_delta_flow_task.csproj" -c Release -o /app/publish
+RUN dotnet publish "company_delta_flow_task_blazor.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "company_delta_flow_task.dll"]
+ENTRYPOINT ["dotnet", "company_delta_flow_task_blazor.dll"]

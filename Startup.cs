@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using company_delta_flow_task_blazor.Data;
 
-namespace company_delta_flow_task
+namespace company_delta_flow_task_blazor
 {
 	public class Startup
 	{
@@ -22,9 +22,12 @@ namespace company_delta_flow_task
 		public IConfiguration Configuration { get; }
 
 		// This method gets called by the runtime. Use this method to add services to the container.
+		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddRazorPages();
+			services.AddServerSideBlazor();
+			services.AddSingleton<WeatherForecastService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,20 +40,16 @@ namespace company_delta_flow_task
 			else
 			{
 				app.UseExceptionHandler("/Error");
-				// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-				app.UseHsts();
 			}
 
-			app.UseHttpsRedirection();
 			app.UseStaticFiles();
 
 			app.UseRouting();
 
-			app.UseAuthorization();
-
 			app.UseEndpoints(endpoints =>
 			{
-				endpoints.MapRazorPages();
+				endpoints.MapBlazorHub();
+				endpoints.MapFallbackToPage("/_Host");
 			});
 		}
 	}

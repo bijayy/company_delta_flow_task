@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30621.155
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "company_delta_flow_task_blazor", "company_delta_flow_task_blazor.csproj", "{5C24D671-CFBC-48B8-A89A-D661A9F6FE46}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C24D671-CFBC-48B8-A89A-D661A9F6FE46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C24D671-CFBC-48B8-A89A-D661A9F6FE46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C24D671-CFBC-48B8-A89A-D661A9F6FE46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C24D671-CFBC-48B8-A89A-D661A9F6FE46}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {383DB6AA-5E97-4F28-B871-9DA70416CB86}
+	EndGlobalSection
+EndGlobal
