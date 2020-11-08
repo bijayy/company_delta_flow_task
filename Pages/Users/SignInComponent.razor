@@ -1,5 +1,36 @@
-﻿<h3>SignInComponent</h3>
+﻿@page "/account/login"
+@page "/"
+@layout NoMenuLayout
+@inherits SignInComponentBase
 
-@code {
-
-}
+<FormTemplate Title="@("Sign In")"
+			  Model="@signInViewModel"
+			  SubmitButtonText="Sign In"
+			  SubmitButtonTitle="Please click here to sign in to take quiz."
+			  CancelButtonTitle="Not registered yet. Please click here to register."
+			  CancelButtonText="Register"
+			  ShowCancelButton="true"
+			  OnValidSubmit="SignInAsync"
+			  OnCancelClicked="this.SignUpRedirectAsync">
+	<Messages>
+		<MessageTemplate IsSucess="@this.IsSuccess" Success="@("Log in successfull. Redirecting...")"
+						 IsError="!this.IsSuccess && !this.IsInit" Error="@("Email or password is invalid. Please try again later.")">
+		</MessageTemplate>
+	</Messages>
+	<Content>
+		@{ signInViewModel.Email = signInViewModel.Email.Trim().ToLower();
+							signInViewModel.Password = signInViewModel.Password.Trim(); }
+		<div class="col-md-4 offset-md-4">
+			<p class="form-group" title="Enter Email">
+				<label for="@signInViewModel.Email">Email<span style="color:red">*</span>: </label>
+				<input type="text" id="@signInViewModel.Email" placeholder="Enter Email" class="form-control" @bind-value="signInViewModel.Email" />
+				<ValidationMessage For="@(() => signInViewModel.Email)"></ValidationMessage>
+			</p>
+			<p class="form-group" title="Enter Password">
+				<label for="@signInViewModel.Password">Password<span style="color:red">*</span>: </label>
+				<input type="password" id="@signInViewModel.Password" placeholder="Enter Password" class="form-control" @bind-value="signInViewModel.Password" />
+				<ValidationMessage For="@(() => signInViewModel.Password)"></ValidationMessage>
+			</p>
+		</div>
+	</Content>
+</FormTemplate>

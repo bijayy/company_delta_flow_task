@@ -1,0 +1,13 @@
+﻿﻿<h5 @attributes="this.Attributes">@ChildContent</h5>
+<hr />
+
+@code {
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	[Parameter]
+	public Dictionary<string, object> Attributes { get; set; } = new Dictionary<string, object>()
+	{
+		{ "class", "text-center" }
+	};
+}

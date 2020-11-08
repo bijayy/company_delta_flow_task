@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using company_delta_flow_task_blazor.Data;
+using company_delta_flow_task_blazor.Data.Providers;
+
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using company_delta_flow_task_blazor.Data;
 
 namespace company_delta_flow_task_blazor
 {
@@ -28,6 +25,8 @@ namespace company_delta_flow_task_blazor
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
 			services.AddSingleton<WeatherForecastService>();
+
+			services.AddSingleton<IUserProvider, UserProvider>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

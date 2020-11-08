@@ -1,0 +1,81 @@
+﻿@typeparam TModel
+
+@if (this.IsLoading)
+{
+<HourGlassTemplate /> }
+			else if (this.Model != null)
+			{
+<HeaderTemplate>
+	@Title
+</HeaderTemplate>
+				@Messages
+					<div class="row col-md-12">
+						<EditForm Model="@this.Model" OnValidSubmit="@this.OnValidSubmit" @attributes=@FormAttributes>
+							<div class=@this.ColOffsetCss>
+								<DataAnnotationsValidator />
+								<ValidationSummary />
+							</div>
+							@Content
+							<div class=@(ColButtonCss + " " + ColOffsetCss)>
+								<p class="input-group">
+									<button type="submit" disabled="@this.IsLoading" title="@(this.SubmitButtonTitle ?? "Sign Up")" class="@DefaultCss.OkButton form-control">
+<span>@(this.SubmitButtonText ?? "Sign Up")</span>
+									</button>
+									@if (this.ShowCancelButton)
+									{
+				<button type="reset" title="@(this.CancelButtonTitle ?? "Close this window")" class="@DefaultCss.CancelButton form-control ml-2" @onclick="this.OnCancelClicked">
+					@(this.CancelButtonText ?? "Close")
+				</button>}
+								</p>
+							</div>
+						</EditForm>
+					</div>
+}
+
+@code { [Parameter]
+			public bool IsLoading { get; set; }
+
+			[Parameter]
+			public string ColOffsetCss { get; set; } = "offset-md-4";
+
+			[Parameter]
+			public string ColButtonCss { get; set; } = "col-md-4";
+
+			[Parameter]
+			public IDictionary<string, object> FormAttributes { get; set; } = new Dictionary<string, object>
+			{
+			{ "class", "col-md-12" }
+		};
+
+			[Parameter]
+			public bool ShowCancelButton { get; set; }
+
+			[Parameter]
+			public EventCallback OnValidSubmit { get; set; }
+
+			[Parameter]
+			public TModel Model { get; set; }
+
+			[Parameter]
+			public string Title { get; set; }
+
+			[Parameter]
+			public string SubmitButtonTitle { get; set; }
+
+			[Parameter]
+			public string SubmitButtonText { get; set; }
+
+			[Parameter]
+			public string CancelButtonTitle { get; set; }
+
+			[Parameter]
+			public string CancelButtonText { get; set; }
+
+			[Parameter]
+			public RenderFragment Messages { get; set; }
+
+			[Parameter]
+			public RenderFragment Content { get; set; }
+
+			[Parameter]
+			public EventCallback OnCancelClicked { get; set; } }

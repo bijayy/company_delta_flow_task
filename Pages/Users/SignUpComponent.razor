@@ -1,0 +1,40 @@
+﻿@page "/user/signup";
+@layout NoMenuLayout
+@inherits SignUpComponentBase;
+
+<FormTemplate Title="Sign Up"
+			  Model="@this.signUpViewModel"
+			  SubmitButtonTitle="Please click here to sign up in to this portal."
+			  SubmitButtonText="Sign Up"
+			  CancelButtonText="Sign In"
+			  CancelButtonTitle="Existing user. Please click here to sign in."
+			  ShowCancelButton="true"
+			  OnValidSubmit="this.SignUpAsync"
+			  OnCancelClicked="this.CancelAsync">
+	<Messages>
+		<MessageTemplate IsSucess="this.IsSuccess"
+						 IsError="(!this.IsSuccess && this.signUpViewModel == null)"
+						 IsUpdateError="this.IsUpdateFailed"
+						 IsInfo="this.IsExists">
+			@(this.IsExists ? signUpViewModel.PhoneNumber : signUpViewModel.FullName)
+		</MessageTemplate>
+	</Messages>
+	<Content>
+		<div class="col-md-4 offset-md-4">
+			<p class="form-group" title="Enter Full Name">
+				<label for="@signUpViewModel.FullName">Full Name<span style="color:red">*</span>: </label>
+				<input type="text" id="@signUpViewModel.FullName" placeholder="Enter Full Name" class="form-control" @bind-value="signUpViewModel.FullName" />
+				<ValidationMessage For="@(() => signUpViewModel.FullName)"></ValidationMessage>
+			</p>
+			<p class="form-group">
+				<label for="@signUpViewModel.Email">Emails: </label>
+				<input type="text" id="@signUpViewModel.Email" placeholder="Enter Emails" class="form-control" @bind-value="signUpViewModel.Email" />
+				<ValidationMessage For="@(() => signUpViewModel.Email)"></ValidationMessage>
+			</p>
+			<p class="form-group" title="Enter Phone Number(s)">
+				<label for="@signUpViewModel.PhoneNumber">Phone Number</label>
+				<input type="number" id="@signUpViewModel.PhoneNumber" placeholder="Enter Phone Number" class="form-control" @bind-value="signUpViewModel.PhoneNumber" />
+			</p>
+		</div>
+	</Content>
+</FormTemplate>

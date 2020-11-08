@@ -3,7 +3,7 @@ Task Description
 
 1. Create Login and Register with players information. (i.e. User Name, Email and Password). Store new player information in database.
 
-2. Registration is to be done via email validation i.e. you need to confirm the one who is signing up is a genuine person so email verification is required 
+2. Registration is to be done via Email validation i.e. you need to confirm the one who is signing up is a genuine person so Email verification is required 
 
 3. After players have Logged In, players can play new game (Quiz) or Logout. 
 

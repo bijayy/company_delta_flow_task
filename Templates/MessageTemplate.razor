@@ -1,0 +1,145 @@
+﻿@if (this.IsSucess)
+{
+<div id="divValidationMessage" class="alert alert-success row">
+	<div class="col-@(MessageLength + 1)" style="text-align:center">
+		@if (this.ChildContent != null)
+		{
+<span>@ChildContent has been saved successfully</span> }
+else
+{
+<span>@this.Success</span>}
+	</div>
+	<div class="col-1" style="text-align:right">
+		<a style="text-underline-position:below; cursor:pointer" @onclick="(() => CloseValidation())">x</a>
+	</div>
+</div> }
+else if (this.IsInfo)
+{
+<div id="divValidationMessage" class="alert alert-info row">
+	<div class="col-@(MessageLength + 1)" style="text-align:center">
+		@if (this.ChildContent != null)
+		{
+<span>@ChildContent already exists. Please add another.</span> }
+else
+{
+<span>@this.Info</span>}
+	</div>
+	<div class="col-1" style="text-align:right">
+		<a style="text-underline-position:below; cursor:pointer" @onclick="(() => CloseValidation())">x</a>
+	</div>
+</div> }
+else if (this.IsNoItem)
+{
+<div id="divValidationMessage" class="alert alert-secondary row">
+	<div class="col-@(MessageLength + 1)" style="text-align:center">
+		@if (this.Info == null)
+		{
+<span>No record(s)</span> }
+else
+{
+<span>@this.Info</span>}
+	</div>
+	<div class="col-1" style="text-align:right">
+		<a style="text-underline-position:below; cursor:pointer" @onclick="(() => CloseValidation())">x</a>
+	</div>
+</div> }
+else if (this.IsWarning)
+{
+<div id="divValidationMessage" class="alert alert-warning row">
+	<div class="col-@(MessageLength + 1)" style="text-align:center">
+		@if (this.ChildContent != null)
+		{
+<span>@ChildContent has invalid input. Please provide the valid input.</span> }
+else
+{
+<span>@this.Warning</span>}
+	</div>
+	<div class="col-1" style="text-align:right">
+		<a style="text-underline-position:below; cursor:pointer" @onclick="(() => CloseValidation())">x</a>
+	</div>
+</div> }
+else if (this.IsUpdateError)
+{
+<div id="divValidationMessage" class="alert alert-danger row">
+	<div class="col-@(MessageLength + 1)" style="text-align:center">
+		@if (this.Error == null)
+		{
+<span style="font-style:italic; font-weight:bold">
+	Error Occured while updating. Please try again.
+</span> }
+else
+{
+<span>@this.Error</span>}
+	</div>
+	<div class="col-1" style="text-align:right">
+		<a style="text-underline-position:below; cursor:pointer" @onclick="(() => CloseValidation())">x</a>
+	</div>
+</div> }
+else if (this.IsError)
+{
+<div id="divValidationMessage" class="alert alert-danger row">
+	<div class="col-@(MessageLength + 1)" style="text-align:center">
+		@if (this.Error == null)
+		{
+<span style="font-style:italic; font-weight:bold">
+	Oops, something went wrong. Please contact system admin.
+</span> }
+else
+{
+<span>@this.Error</span>}
+	</div>
+	<div class="col-1" style="text-align:right">
+		<a style="text-underline-position:below; cursor:pointer" @onclick="(() => CloseValidation())">x</a>
+	</div>
+</div>}
+
+@code
+{ [Parameter]
+	public int MessageLength { get; set; } = 10;
+
+	[Parameter]
+	public bool IsSucess { get; set; }
+
+	[Parameter]
+	public bool IsInfo { get; set; }
+
+	[Parameter]
+	public bool IsWarning { get; set; }
+
+	[Parameter]
+	public bool IsNoItem { get; set; }
+
+	[Parameter]
+	public bool IsUpdateError { get; set; }
+
+	[Parameter]
+	public bool IsError { get; set; }
+
+	[Parameter]
+	public string Success { get; set; }
+
+	[Parameter]
+	public string Info { get; set; }
+
+	[Parameter]
+	public string Warning { get; set; }
+
+	[Parameter]
+	public string UpdateError { get; set; }
+
+	[Parameter]
+	public string Error { get; set; }
+
+	/// <summary>
+	/// For eg. DefaultContent has been saved successfully. Where DefaultContent might be John Doe, Product1, etc.
+	/// </summary>
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	private void CloseValidation()
+	{
+		this.IsSucess = false;
+		this.IsInfo = false;
+		this.IsWarning = false;
+		this.IsError = false;
+	} }

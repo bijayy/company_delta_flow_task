@@ -181,3 +181,90 @@ app {
         display: block;
     }
 }
+
+/*Spinner or Glass Hour or Loading*/
+
+.spinner {
+    border: 16px solid silver;
+    border-top: 16px solid #337AB7;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 700ms linear infinite;
+    top: 40%;
+    left: 55%;
+    position: absolute;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+/*Bootstrap modified to show sticky menu*/
+
+.card {
+    position: inherit;
+}
+
+.col-md-6 {
+    position: inherit;
+}
+
+/*Messages*/
+
+.success {
+    color: white;
+    background-color: darkgreen;
+    text-align: center;
+    padding: 5px;
+}
+
+.error {
+    color: white;
+    background-color: darkred;
+    text-align: center;
+    padding: 5px;
+}
+
+.warning {
+    color: black;
+    background-color: yellow !important;
+    text-align: center;
+    padding: 5px;
+}
+
+.warning {
+    color: black;
+    background-color: yellow !important;
+    text-align: center;
+    padding: 5px;
+}
+
+/*Input text*/
+/*input[type='text'] {
+	text-transform: uppercase;
+}*/
+
+input[type='text'] {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/*Modified Bootstrap or SCSS*/
+
+body {
+    text-align: left;
+}
+
+/*To go the content below the sticky view*/
+.input-group {
+    position: inherit;
+}
+
