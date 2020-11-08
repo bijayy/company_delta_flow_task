@@ -24,6 +24,7 @@ namespace company_delta_flow_task_blazor
 		{
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
+			services.AddHttpContextAccessor();
 			services.AddSingleton<WeatherForecastService>();
 
 			services.AddSingleton<IUserProvider, UserProvider>();

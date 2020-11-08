@@ -27,8 +27,9 @@ else
 	<div class="col-1" style="text-align:right">
 		<a style="text-underline-position:below; cursor:pointer" @onclick="(() => CloseValidation())">x</a>
 	</div>
-</div> }
-else if (this.IsNoItem)
+</div>}
+
+@if (this.IsNoItem)
 {
 <div id="divValidationMessage" class="alert alert-secondary row">
 	<div class="col-@(MessageLength + 1)" style="text-align:center">
@@ -58,6 +59,40 @@ else
 		<a style="text-underline-position:below; cursor:pointer" @onclick="(() => CloseValidation())">x</a>
 	</div>
 </div> }
+else if (this.IsEmailNotVerified)
+{
+<div id="divValidationMessage" class="alert alert-danger row">
+	<div class="col-@(MessageLength + 1)" style="text-align:center">
+		@if (this.EmailNotVerified == null)
+		{
+<span style="font-style:italic; font-weight:bold">
+	Email not verified. Please check your email and then verify.
+</span> }
+else
+{
+<span>@this.EmailNotVerified</span>}
+	</div>
+	<div class="col-1" style="text-align:right">
+		<a style="text-underline-position:below; cursor:pointer" @onclick="(() => CloseValidation())">x</a>
+	</div>
+</div>}
+else if (this.IsEmailNotSent)
+{
+<div id="divValidationMessage" class="alert alert-danger row">
+	<div class="col-@(MessageLength + 1)" style="text-align:center">
+		@if (this.EmailNotSent == null)
+		{
+<span style="font-style:italic; font-weight:bold">
+	Email not sent. Please <a style="text-underline-position:below; cursor:pointer" @onclick="SendEmail">click here</a> to send email again.
+</span> }
+else
+{
+<span>@this.EmailNotSent</span>}
+	</div>
+	<div class="col-1" style="text-align:right">
+		<a style="text-underline-position:below; cursor:pointer" @onclick="SendEmail">x</a>
+	</div>
+</div>}
 else if (this.IsUpdateError)
 {
 <div id="divValidationMessage" class="alert alert-danger row">
@@ -93,6 +128,22 @@ else
 	</div>
 </div>}
 
+@if (this.IsEmailVerifying)
+{
+<div id="divValidationMessage" class="alert alert-info row">
+	<div class="col-@(MessageLength + 1)" style="text-align:center">
+		@if (this.ChildContent != null)
+		{
+<span>@ChildContent verifying email. Please wait.</span> }
+else
+{
+<span>@this.EmailVerifying</span>}
+	</div>
+	<div class="col-1" style="text-align:right">
+		<a style="text-underline-position:below; cursor:pointer" @onclick="(() => CloseValidation())">x</a>
+	</div>
+</div>}
+
 @code
 { [Parameter]
 	public int MessageLength { get; set; } = 10;
@@ -116,6 +167,15 @@ else
 	public bool IsError { get; set; }
 
 	[Parameter]
+	public bool IsEmailNotVerified { get; set; }
+
+	[Parameter]
+	public bool IsEmailVerifying { get; set; }
+
+	[Parameter]
+	public bool IsEmailNotSent { get; set; }
+
+	[Parameter]
 	public string Success { get; set; }
 
 	[Parameter]
@@ -129,6 +189,18 @@ else
 
 	[Parameter]
 	public string Error { get; set; }
+
+	[Parameter]
+	public string EmailNotVerified { get; set; }
+
+	[Parameter]
+	public string EmailVerifying { get; set; }
+
+	[Parameter]
+	public string EmailNotSent { get; set; }
+
+	[Parameter]
+	public EventCallback SendEmail { get; set; }
 
 	/// <summary>
 	/// For eg. DefaultContent has been saved successfully. Where DefaultContent might be John Doe, Product1, etc.

@@ -12,11 +12,13 @@
 			  OnValidSubmit="this.SignUpAsync"
 			  OnCancelClicked="this.CancelAsync">
 	<Messages>
-		<MessageTemplate IsSucess="this.IsSuccess"
+		<MessageTemplate IsSucess="this.IsSuccess || SignUpStatus.EmailNotSent == status"
+						 Success="Registration successful. Please check your email and verify first to sing in."
+						 IsEmailNotSent="SignUpStatus.EmailNotSent == status"
+						 SendEmail="this.SendEmail"
 						 IsError="(!this.IsSuccess && this.signUpViewModel == null)"
-						 IsUpdateError="this.IsUpdateFailed"
 						 IsInfo="this.IsExists">
-			@(this.IsExists ? signUpViewModel.PhoneNumber : signUpViewModel.FullName)
+			@(this.IsExists ? signUpViewModel.Email : signUpViewModel.FullName)
 		</MessageTemplate>
 	</Messages>
 	<Content>
@@ -26,14 +28,30 @@
 				<input type="text" id="@signUpViewModel.FullName" placeholder="Enter Full Name" class="form-control" @bind-value="signUpViewModel.FullName" />
 				<ValidationMessage For="@(() => signUpViewModel.FullName)"></ValidationMessage>
 			</p>
-			<p class="form-group">
-				<label for="@signUpViewModel.Email">Emails: </label>
+			<p class="form-group" title="Enter Email">
+				<label for="@signUpViewModel.Email">Emails<span style="color:red">*</span>: </label>
 				<input type="text" id="@signUpViewModel.Email" placeholder="Enter Emails" class="form-control" @bind-value="signUpViewModel.Email" />
 				<ValidationMessage For="@(() => signUpViewModel.Email)"></ValidationMessage>
 			</p>
-			<p class="form-group" title="Enter Phone Number(s)">
-				<label for="@signUpViewModel.PhoneNumber">Phone Number</label>
-				<input type="number" id="@signUpViewModel.PhoneNumber" placeholder="Enter Phone Number" class="form-control" @bind-value="signUpViewModel.PhoneNumber" />
+			<p class="form-group" title="Enter Gender">
+				<label for="@signUpViewModel.Genders">Gender<span style="color:red">*</span>: </label>
+				<select @onchange="@(e => OnChange(e.Value.ToString()))" class="form-control">
+					@foreach (string gender in signUpViewModel.Genders)
+					{
+						<option value="@gender">@gender</option>
+					}
+				</select>
+				<ValidationMessage For="@(() => signUpViewModel.Email)"></ValidationMessage>
+			</p>
+			<p class="form-group" title="Enter Password">
+				<label for="@signUpViewModel.Email">Password<span style="color:red">*</span>: </label>
+				<input type="password" id="@signUpViewModel.Password" placeholder="Enter Password" class="form-control" @bind-value="signUpViewModel.Password" />
+				<ValidationMessage For="@(() => signUpViewModel.Password)"></ValidationMessage>
+			</p>
+			<p class="form-group" title="Enter Confirm Password">
+				<label for="@signUpViewModel.ConfirmPassword">Confirm Password<span style="color:red">*</span>: </label>
+				<input type="password" id="@signUpViewModel.ConfirmPassword" placeholder="Enter Confirm Password" class="form-control" @bind-value="signUpViewModel.ConfirmPassword" />
+				<ValidationMessage For="@(() => signUpViewModel.ConfirmPassword)"></ValidationMessage>
 			</p>
 		</div>
 	</Content>

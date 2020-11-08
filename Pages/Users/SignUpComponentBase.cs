@@ -22,9 +22,8 @@ namespace company_delta_flow_task_blazor.Pages.Users
 		[Inject]
 		protected NavigationManager navigationManager { get; set; }
 
-		protected bool IsServerError { get; set; }
+		protected SignUpStatus status { get; set; }
 		protected bool IsSuccess { get; set; }
-		protected bool IsUpdateFailed { get; set; }
 		protected bool IsExists { get; set; }
 		protected bool IsInProgress { get; set; } = true;
 
@@ -39,11 +38,16 @@ namespace company_delta_flow_task_blazor.Pages.Users
 		{
 			this.IsExists = false;
 			this.IsInProgress = true;
-			this.IsUpdateFailed = false;
 
-			if (await this.userProvider.IsUserExistAsync(signUpViewModel.Email, cancellationTokenSource.Token))
+			Exist exist = await this.userProvider.IsUserExistAsync(signUpViewModel.Email, cancellationTokenSource.Token);
+
+			if (Exist.Yes == exist)
 			{
 				this.IsExists = true;
+			}
+			else if(Exist.Failed == exist)
+			{
+				this.IsSuccess = false;
 			}
 			else
 			{
@@ -51,10 +55,12 @@ namespace company_delta_flow_task_blazor.Pages.Users
 				{
 					FullName = signUpViewModel.FullName.Trim(),
 					Email = signUpViewModel.Email.ToLower().Trim(),
-					PhoneNumber = signUpViewModel.PhoneNumber.Trim()
+					Gender = signUpViewModel.Gender.Trim(),
+					Password = signUpViewModel.Password.Trim()
 				};
 
-				this.IsSuccess = await this.userProvider.SignUpAsync(signUpViewModel, cancellationTokenSource.Token);
+				status = await this.userProvider.SignUpAsync(signUpViewModel, cancellationTokenSource.Token);
+				this.IsSuccess = SignUpStatus.Success == status;
 
 				if (this.IsSuccess)
 				{
@@ -68,6 +74,23 @@ namespace company_delta_flow_task_blazor.Pages.Users
 		protected async Task CancelAsync()
 		{
 			await Task.Run(() => this.navigationManager.NavigateTo($"{LocalUrl.SignIn}", false));
+		}
+
+		protected async Task SendEmail()
+		{
+			bool isSent = await Task.Run(() => this.userProvider.SendEmail(new UserViewModel
+			{
+				FullName = signUpViewModel.FullName.Trim(),
+				Email = signUpViewModel.Email.ToLower().Trim(),
+				Gender = signUpViewModel.Gender.Trim()
+			}));
+
+			status = isSent ? SignUpStatus.Success : SignUpStatus.EmailNotSent;
+		}
+
+		protected void OnChange(string gender)
+		{
+			this.signUpViewModel.Gender = gender;
 		}
 	}
 }

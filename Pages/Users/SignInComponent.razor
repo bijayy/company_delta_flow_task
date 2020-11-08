@@ -14,6 +14,7 @@
 			  OnCancelClicked="this.SignUpRedirectAsync">
 	<Messages>
 		<MessageTemplate IsSucess="@this.IsSuccess" Success="@("Log in successfull. Redirecting...")"
+						 IsEmailNotVerified="SignInStatus.EmailNotVerified == status"
 						 IsError="!this.IsSuccess && !this.IsInit" Error="@("Email or password is invalid. Please try again later.")">
 		</MessageTemplate>
 	</Messages>

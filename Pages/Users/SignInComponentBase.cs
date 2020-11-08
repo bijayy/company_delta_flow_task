@@ -21,6 +21,8 @@ namespace company_delta_flow_task_blazor.Pages.Users
 		protected NavigationManager navigationManager { get; set; }
 
 		protected SignInViewModel signInViewModel { get; set; }
+
+		protected SignInStatus status { get; set; } = SignInStatus.Success;
 		protected bool IsInit { get; set; } = true;
 		protected bool IsSuccess { get; set; }
 		protected bool isInProgress { get; set; } = true;
@@ -35,7 +37,8 @@ namespace company_delta_flow_task_blazor.Pages.Users
 		protected async Task SignInAsync()
 		{
 			this.isInProgress = true;
-			this.IsSuccess = await this.userProvider.SignInAsync(signInViewModel, cancellationTokenSource.Token);
+			status = await this.userProvider.SignInAsync(signInViewModel, cancellationTokenSource.Token);
+			this.IsSuccess = SignInStatus.Success == status;
 
 			if (this.IsSuccess)
 			{

@@ -1,0 +1,34 @@
+﻿@page "/user/verify/{Id}"
+@inherits ComponentBase
+@layout NoMenuLayout
+@inject IUserProvider userProvider 
+@inject NavigationManager navigationManager 
+
+<MessageTemplate IsSucess="this.isEmailVerified"
+				 Success="Email verified. You can login now and take your quiz."
+				 IsError="!this.isEmailVerified"
+				 IsEmailVerifying="this.isEmailVerifiying"
+				 EmailVerifying="Email is being verified. Please wait."
+				 Error="Email verification failed. Please try again later.">
+</MessageTemplate>
+<div class="text-center">
+	<a title="Login to quiz world" class="@DefaultCss.OkButton form-control ml-2 col-md-1" href="/">
+		Sign In
+	</a>
+</div>
+
+@code {
+	[Parameter]
+	public string Id { get; set; }
+
+	private bool isEmailVerifiying { get; set; } = true;
+	private bool isEmailVerified { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		isEmailVerified = await userProvider.VerifyUser(Convert.ToInt64(this.Id));
+		isEmailVerifiying = false;
+
+		await base.OnInitializedAsync();
+	}
+}
