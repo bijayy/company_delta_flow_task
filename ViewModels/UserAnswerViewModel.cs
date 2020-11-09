@@ -10,8 +10,10 @@ namespace company_delta_flow_task_blazor.ViewModels
 		[Required]
 		public int TotalQuestion { get; set; }
 
+		[Required]
 		public int TotalAttempted { get; set; }
 
+		[Required]
 		public int TotalCorrect { get; set; }
 
 		[Required]

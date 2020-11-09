@@ -227,9 +227,38 @@ namespace company_delta_flow_task_blazor.Data.Providers
 			}
 		}
 
-		public Task<bool> CalculateQuizResultAsync(UserAnswerViewModel userAnswerViewModel, CancellationToken cancellationToken = default)
+		public async Task<bool> CalculateQuizResultAsync(UserAnswerViewModel userAnswerViewModel, CancellationToken cancellationToken = default)
 		{
-			throw new NotImplementedException();
+			using (SqlConnection connection = new SqlConnection(DefaultDataConfig.ConnectionString))
+			{
+				int insertedRecord = 0;
+
+				try
+				{
+					SqlCommand command = new SqlCommand("usp_insertUserQuizResult", connection);
+					command.CommandType = CommandType.StoredProcedure;
+
+					command.Parameters.AddWithValue("@TotalQuestion", userAnswerViewModel.TotalQuestion);
+					command.Parameters.AddWithValue("@TotalAttempted", userAnswerViewModel.TotalAttempted);
+					command.Parameters.AddWithValue("@TotalCorrect", userAnswerViewModel.TotalCorrect);
+					command.Parameters.AddWithValue("@UserId", userAnswerViewModel.UserId);
+					command.Parameters.AddWithValue("@QuizId", userAnswerViewModel.QuizId);
+
+					connection.Open();
+					insertedRecord = await command.ExecuteNonQueryAsync(cancellationToken);
+					return true;
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex);
+				}
+				finally
+				{
+					connection.Close();
+				}
+
+				return false;
+			}
 		}
 	}
 }

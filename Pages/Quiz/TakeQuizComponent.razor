@@ -5,37 +5,66 @@
 
 @if (this.quizTupleList != null)
 {
-	<div>
+	@if (!this.isCalculated)
+	{
 		<div>
-			<b>@this.currentQuestion.Name</b>
-		</div>
-		<div>
-			@this.currentQuestion.Description
-		</div>
-		@{
-			var answers = this.quizTupleList.Item3.Where(x => currentQuestion.Id == x.QuestionId).ToList();
-		}
-
-		<div>
-			@foreach (var answer in answers)
+			@if (this.rightAnswers.Count + wrongAnswers.Count <= 5)
 			{
-				<input type="radio" id="@answer.Id" @onchange="@(() => this.OnAnswerSelected(answer))" value="@answer.Name" />
+				<div class="bg-danger center">
+					Please attend more than 5 questions to submit quiz.
+				</div>
+			}
+			<div>
+				<b>@this.currentQuestion.Name</b>
+			</div>
+			<div>
+				@this.currentQuestion.Description
+			</div>
+			<div>
+				@foreach (var answer in this.quizTupleList.Item3.Where(x => currentQuestion.Id == x.QuestionId).ToList())
+				{
+					<div>
+						<input type="radio" name="@answer.QuestionId" id="@answer.Id" @onchange="@(() => this.OnAnswerSelected(answer))" value="@answer.Name" checked=@(this.userStateService.SelectedRadioButton == @answer.Id) /> @answer.Name
+					</div>
+				}
+			</div>
+
+			<div>
+				<input type="button" @onclick="@(() => this.Previous())" value="Previous" />
+				<input type="button" @onclick="@(() => this.Next())" value="Next" />
+			</div>
+			@if (this.rightAnswers.Count + wrongAnswers.Count > 5)
+			{
+				<div>
+					<input type="button" @onclick="@(() => this.SubmitAnswer())" value="Submit" />
+				</div>
 			}
 		</div>
-
+	}
+	else if (this.rightAnswers.Count + wrongAnswers.Count > 5 && this.isCalculated)
+	{
 		<div>
-			<input type="button" @onclick="@(() => this.Previous())" value="Previous" />
-			<input type="button" @onclick="@(() => this.Next())" value="Next" />
+			<div>
+				<input type="button" @onclick="@(() => this.LogOut())" value="LogOut" />
+			</div>
+			<div>
+				<b> @(rightAnswers.Count/quizTupleList.Item2.Count*100 >= quizTupleList.Item1.First(x => x.Id == this.currentQuestion.QuizId).PassPercentage ? "Pass" : "Failed")</b>
+			</div>
+			<div>
+				<b>Total Questions:</b> @quizTupleList.Item2.Count
+			</div>
+			<div>
+				<b>Total Attempted Questions:</b> @(rightAnswers.Count + wrongAnswers.Count)
+			</div>
+			<div>
+				<b>Total Not Attempted Questions:</b> @(quizTupleList.Item2.Count - rightAnswers.Count + wrongAnswers.Count)
+			</div>
+			<div>
+				<b>Total Right Answers:</b> @rightAnswers.Count
+			</div>
+			<div>
+				<b>Total Wrong Answers:</b> @wrongAnswers.Count
+			</div>
 		</div>
-		<div>
-			<input type="button" @onclick="@(() => this.SubmitAnswer())" value="Submit" />
-		</div>
-		<div>
-			Total Questions: @quizTupleList.Item2.Count
-			Total Attempted Questions: @(rightAnswers.Count + wrongAnswers.Count)
-			Total Not Attempted Questions: @(quizTupleList.Item2.Count - rightAnswers.Count + wrongAnswers.Count)
-			Total Right Answers: @rightAnswers.Count
-			Total Wrong Answers: @wrongAnswers
-		</div>
-	</div>
+	}
 }

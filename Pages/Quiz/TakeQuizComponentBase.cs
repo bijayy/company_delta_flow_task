@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using company_delta_flow_task_blazor.Common;
 using company_delta_flow_task_blazor.Data.Providers;
 using company_delta_flow_task_blazor.Services;
 using company_delta_flow_task_blazor.ViewModels;
@@ -28,17 +29,23 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 		protected Tuple<List<QuizViewModel>, List<QuestionViewModel>, List<AnswerViewModel>> quizTupleList { get; set; }
 
 		protected QuestionViewModel currentQuestion { get; set; } = new QuestionViewModel();
-		protected long currentAnswerId { get; set; }
 		protected List<long> rightAnswers { get; set; } = new List<long>();
 		protected List<long> wrongAnswers { get; set; } = new List<long>();
+		protected List<string> selectedAnswers { get; set; } = new List<string>();
 		protected int totalAttemptedQuestion { get; set; }
 		protected bool IsInit { get; set; } = true;
 		protected bool IsSuccess { get; set; }
+		protected bool isCalculated { get; set; }
 		protected bool isInProgress { get; set; } = true;
 
 		protected async override Task OnInitializedAsync()
 		{
 			this.userStateService.OnChange += StateHasChanged;
+
+			if (this.userStateService.UserId <= 0)
+			{
+				this.LogOut();
+			}
 
 			this.quizTupleList = await quizProvider.GetQuizListByUserIdAsync(this.userStateService.UserId);
 
@@ -64,34 +71,7 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 				this.currentQuestion = this.quizTupleList.Item2[index + 1];
 			}
 
-			if (this.quizTupleList.Item3
-				.Any(x => x.QuestionId == this.currentQuestion.Id && x.Id == this.currentAnswerId && x.IsCorrect))
-			{
-				if (!this.rightAnswers.Any(x => x == this.currentAnswerId))
-				{
-					this.rightAnswers.Add(this.currentAnswerId);
-				}
-
-				if (this.wrongAnswers.Any(x => x == this.currentAnswerId))
-				{
-					this.wrongAnswers.Remove(this.currentAnswerId);
-				}
-			}
-			else if (this.quizTupleList.Item3
-				.Any(x => x.QuestionId == this.currentQuestion.Id && x.Id == this.currentAnswerId && !x.IsCorrect))
-			{
-				if (this.rightAnswers.Any(x => x == this.currentAnswerId))
-				{
-					this.rightAnswers.Remove(this.currentAnswerId);
-				}
-
-				if (!this.wrongAnswers.Any(x => x == this.currentAnswerId))
-				{
-					this.wrongAnswers.Add(this.currentAnswerId);
-				}
-			}
-
-			this.currentAnswerId = 0;
+			this.userStateService.SelectedRadioButton = this.quizTupleList.Item3.Select(x => x.Id).Where(x => this.selectedAnswers.Any(y => y.Split('-')[1] == x.ToString())).FirstOrDefault();
 		}
 
 		protected void Previous()
@@ -107,50 +87,69 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 				this.currentQuestion = this.quizTupleList.Item2[index - 1];
 			}
 
-			if (this.quizTupleList.Item3
-				.Any(x => x.QuestionId == this.currentQuestion.Id && x.Id == this.currentAnswerId && x.IsCorrect))
-			{
-				if (!this.rightAnswers.Any(x => x == this.currentAnswerId))
-				{
-					this.rightAnswers.Add(this.currentAnswerId);
-				}
-
-				if (this.wrongAnswers.Any(x => x == this.currentAnswerId))
-				{
-					this.wrongAnswers.Remove(this.currentAnswerId);
-				}
-			}
-			else if (this.quizTupleList.Item3
-				.Any(x => x.QuestionId == this.currentQuestion.Id && x.Id == this.currentAnswerId && !x.IsCorrect))
-			{
-				if (this.rightAnswers.Any(x => x == this.currentAnswerId))
-				{
-					this.rightAnswers.Remove(this.currentAnswerId);
-				}
-
-				if (!this.wrongAnswers.Any(x => x == this.currentAnswerId))
-				{
-					this.wrongAnswers.Add(this.currentAnswerId);
-				}
-			}
-
-			this.currentAnswerId = 0;
+			this.userStateService.SelectedRadioButton = this.quizTupleList.Item3.Select(x => x.Id).Where(x => this.selectedAnswers.Any(y => y.Split('-')[1] == x.ToString())).FirstOrDefault();
 		}
 
 		protected void OnAnswerSelected(AnswerViewModel e)
 		{
-			this.currentAnswerId = e.Id;
+			if (this.quizTupleList.Item3
+	.Any(x => x.QuestionId == this.currentQuestion.Id && x.Id == e.Id && x.IsCorrect))
+			{
+				if (!this.rightAnswers.Any(x => x == this.currentQuestion.Id))
+				{
+					this.rightAnswers.Add(this.currentQuestion.Id);
+				}
+
+				if (this.wrongAnswers.Any(x => x == this.currentQuestion.Id))
+				{
+					this.wrongAnswers.Remove(this.currentQuestion.Id);
+				}
+			}
+			else if (this.quizTupleList.Item3
+				.Any(x => x.QuestionId == this.currentQuestion.Id && x.Id == e.Id && !x.IsCorrect))
+			{
+				if (this.rightAnswers.Any(x => x == this.currentQuestion.Id))
+				{
+					this.rightAnswers.Remove(this.currentQuestion.Id);
+				}
+
+				if (!this.wrongAnswers.Any(x => x == this.currentQuestion.Id))
+				{
+					this.wrongAnswers.Add(this.currentQuestion.Id);
+				}
+			}
+
+			this.userStateService.SelectedRadioButton = e.Id;
+			this.selectedAnswers.RemoveAll(x => x.Split('-')[0] == this.currentQuestion.Id.ToString());
+			this.selectedAnswers.Add($"{this.currentQuestion.Id}-{e.Id}");
 		}
 
 		protected async Task SubmitAnswer()
 		{
-			//this.quizProvider.CalculateQuizResultAsync()
-		}
-	}
+			this.isCalculated = false;
+			this.totalAttemptedQuestion = this.rightAnswers.Count + this.wrongAnswers.Count;
 
-	class Answers
-	{
-		long QuestionId { get; set; }
-		long IsCorrect { get; set; }
+			if(this.totalAttemptedQuestion > 5)
+			{
+				bool isSuccess = await this.quizProvider.CalculateQuizResultAsync(new UserAnswerViewModel
+				{
+					QuizId = this.currentQuestion.QuizId,
+					TotalAttempted = this.totalAttemptedQuestion,
+					TotalCorrect = this.rightAnswers.Count,
+					TotalQuestion = this.quizTupleList.Item2.Count,
+					UserId = this.userStateService.UserId
+				}, cancellationTokenSource.Token);
+
+				this.isCalculated = isSuccess;
+			}
+		}
+
+		protected void LogOut()
+		{
+			this.userStateService.UserId = 0;
+			this.userStateService.SelectedRadioButton = 0;
+			this.navigationManager.NavigateTo(LocalUrl.SignIn, true);
+		}
+
 	}
 }
