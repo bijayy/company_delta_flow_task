@@ -185,7 +185,7 @@ namespace company_delta_flow_task_blazor.Data.Providers
 						{
 							questions.Add(new QuestionViewModel()
 							{
-								Id = quizId,
+								Id = questionId,
 								Name = quizName,
 								Description = questionDescription,
 								QuizId = quizId
@@ -196,11 +196,11 @@ namespace company_delta_flow_task_blazor.Data.Providers
 						string answer = reader["Answer"].ToString();
 						bool answerIsCorrect = Convert.ToBoolean(reader["IsCorrect"]);
 
-						if (!answers.Any(y => y.Id == questionId && y.QuestionId == questionId))
+						if (!answers.Any(y => y.Id == answerId && y.QuestionId == questionId))
 						{
 							answers.Add(new AnswerViewModel()
 							{
-								Id = quizId,
+								Id = answerId,
 								Name = quizName,
 								IsCorrect = answerIsCorrect,
 								Description = questionDescription,

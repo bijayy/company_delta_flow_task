@@ -43,7 +43,6 @@ namespace company_delta_flow_task_blazor.Data.Providers
 					while (await reader.ReadAsync(cancellationToken))
 					{
 						user = new UserViewModel();
-						user.Id = Convert.ToInt64(reader["Id"]);
 						user.FullName = reader["FullName"].ToString();
 						user.Email = reader["Email"].ToString();
 						user.Gender = reader["Gender"].ToString();
@@ -52,6 +51,7 @@ namespace company_delta_flow_task_blazor.Data.Providers
 				}
 				catch (Exception ex)
 				{
+					user = null;
 					Console.WriteLine(ex);
 				}
 				finally

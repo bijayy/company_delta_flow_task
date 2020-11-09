@@ -27,10 +27,10 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 
 		protected Tuple<List<QuizViewModel>, List<QuestionViewModel>, List<AnswerViewModel>> quizTupleList { get; set; }
 
-		protected QuestionViewModel currentQuestion { get; set; }
+		protected QuestionViewModel currentQuestion { get; set; } = new QuestionViewModel();
 		protected long currentAnswerId { get; set; }
-		protected List<long> rightAnswers { get; set; }
-		protected List<long> wrongAnswers { get; set; }
+		protected List<long> rightAnswers { get; set; } = new List<long>();
+		protected List<long> wrongAnswers { get; set; } = new List<long>();
 		protected int totalAttemptedQuestion { get; set; }
 		protected bool IsInit { get; set; } = true;
 		protected bool IsSuccess { get; set; }
@@ -39,8 +39,6 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 		protected async override Task OnInitializedAsync()
 		{
 			this.userStateService.OnChange += StateHasChanged;
-
-			this.userStateService.UserId = 9;
 
 			this.quizTupleList = await quizProvider.GetQuizListByUserIdAsync(this.userStateService.UserId);
 
@@ -139,9 +137,9 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 			this.currentAnswerId = 0;
 		}
 
-		protected void OnAnswerSelected(ChangeEventArgs e)
+		protected void OnAnswerSelected(AnswerViewModel e)
 		{
-			this.currentAnswerId = Convert.ToInt64(e.Value);
+			this.currentAnswerId = e.Id;
 		}
 
 		protected async Task SubmitAnswer()

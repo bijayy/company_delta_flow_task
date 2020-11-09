@@ -74,20 +74,20 @@ select * from delta_user
 -- IsExpired, UserId, QuizId)
 --values(0, 9, 1)
 
---alter PROCEDURE usp_getQuizByUserId (
---	@UserId bigint
---	)
---AS
---BEGIN
---	select da.Id As 'AnswerId', da.name as 'Answer', da.IsCorrect,
---	dq.Id as 'QuestionId', dq.Name as 'Question', dq.Description as 'QuestionDetails',
---	d.Id as 'QuizId', d.Name as 'Quiz Name', d.PassPercentage,
---	uq.UserId as 'UserId' from delta_answer da
---left join delta_question dq on da.QuestionId = dq.Id
---left join delta_quiz d on dq.QuizId = d.Id
---left join delta_configure_user_quiz uq on uq.QuizId = d.Id
---where uq.UserId = @UserId and uq.isexpired = 0
---END
+alter PROCEDURE usp_getQuizByUserId (
+	@UserId bigint
+	)
+AS
+BEGIN
+	select da.Id As 'AnswerId', da.name as 'Answer', da.IsCorrect,
+	dq.Id as 'QuestionId', dq.Name as 'Question', dq.Description as 'QuestionDetails',
+	d.Id as 'QuizId', d.Name as 'QuizName', d.PassPercentage,
+	uq.UserId as 'UserId' from delta_answer da
+left join delta_question dq on da.QuestionId = dq.Id
+left join delta_quiz d on dq.QuizId = d.Id
+left join delta_configure_user_quiz uq on uq.QuizId = d.Id
+where uq.UserId = @UserId and uq.isexpired = 0
+END
 
 select * from delta_quiz
 select * from delta_answer

@@ -51,7 +51,6 @@ namespace company_delta_flow_task_blazor.Pages.Users
 			if (this.IsSuccess)
 			{
 				this.userStateService.UserId = user.Id;
-				this.userStateService.NotifyStateChanged();
 
 				this.navigationManager.NavigateTo($"{LocalUrl.TakeQuiz}", false);
 			}
