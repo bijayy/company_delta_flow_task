@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace company_delta_flow_task_blazor.ViewModels
 {
@@ -14,7 +15,5 @@ namespace company_delta_flow_task_blazor.ViewModels
 
 		[Required]
 		public long QuizId { get; set; }
-
-		public AnswerViewModel AnswerViewModel { get; set; }
 	}
 }

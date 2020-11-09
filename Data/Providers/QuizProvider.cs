@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -139,12 +141,12 @@ namespace company_delta_flow_task_blazor.Data.Providers
 			}
 		}
 
-		public async Task<QuizViewModel> GetQuizByUserIdAsync(long userId, CancellationToken cancellationToken = default)
+		public async Task<Tuple<List<QuizViewModel>, List<QuestionViewModel>, List<AnswerViewModel>>> GetQuizListByUserIdAsync(long userId, CancellationToken cancellationToken = default)
 		{
+			var tuples = Tuple.Create(new List<QuizViewModel>(), new List<QuestionViewModel>(), new List<AnswerViewModel>());
+
 			using (SqlConnection connection = new SqlConnection(DefaultDataConfig.ConnectionString))
 			{
-				QuizViewModel quizViewModel = null;
-
 				try
 				{
 					SqlCommand command = new SqlCommand("usp_getQuizByUserId", connection);
@@ -155,37 +157,73 @@ namespace company_delta_flow_task_blazor.Data.Providers
 
 					SqlDataReader reader = await command.ExecuteReaderAsync(cancellationToken);
 
+					List<QuizViewModel> quizViewModels = new List<QuizViewModel>();
+					var questions = new List<QuestionViewModel>();
+					var answers = new List<AnswerViewModel>();
+
 					while (await reader.ReadAsync(cancellationToken))
 					{
-						quizViewModel = new QuizViewModel();
-						quizViewModel.Id = Convert.ToInt64(reader["Id"]);
-						quizViewModel.Name = reader["Name"].ToString();
-						quizViewModel.PassPercentage = Convert.ToInt32(reader["PassPercentage"]);
-						quizViewModel.QuestionViewModel = new QuestionViewModel();
+						long quizId = Convert.ToInt64(reader["QuizId"]);
+						string quizName = reader["QuizName"].ToString();
+						int quizPassPercentage = Convert.ToInt32(reader["PassPercentage"]);
 
-						quizViewModel.QuestionViewModel.Id = Convert.ToBoolean(reader["EmailVerified"]);
+						if(!quizViewModels.Any(x => x.Id == quizId))
+						{
+							quizViewModels.Add(new QuizViewModel()
+							{
+								Id = quizId,
+								Name = quizName,
+								PassPercentage = quizPassPercentage
+							});
+						}
+
+						long questionId = Convert.ToInt64(reader["QuestionId"]);
+						string question = reader["Question"].ToString();
+						string questionDescription = reader["QuestionDetails"].ToString();
+
+						if (!questions.Any(y => y.Id == questionId && y.QuizId == quizId))
+						{
+							questions.Add(new QuestionViewModel()
+							{
+								Id = quizId,
+								Name = quizName,
+								Description = questionDescription,
+								QuizId = quizId
+							});
+						}
+
+						long answerId = Convert.ToInt64(reader["AnswerId"]);
+						string answer = reader["Answer"].ToString();
+						bool answerIsCorrect = Convert.ToBoolean(reader["IsCorrect"]);
+
+						if (!answers.Any(y => y.Id == questionId && y.QuestionId == questionId))
+						{
+							answers.Add(new AnswerViewModel()
+							{
+								Id = quizId,
+								Name = quizName,
+								IsCorrect = answerIsCorrect,
+								Description = questionDescription,
+								QuestionId = questionId
+							});
+						}
 					}
+
+					tuples.Item1.AddRange(quizViewModels);
+					tuples.Item2.AddRange(questions);
+					tuples.Item3.AddRange(answers);
 				}
 				catch (Exception ex)
 				{
 					Console.WriteLine(ex);
+					return null;
 				}
 				finally
 				{
 					connection.Close();
 				}
 
-				if (user != null)
-				{
-					if (user.IsEmailVerified)
-					{
-						return SignInStatus.Success;
-					}
-
-					return SignInStatus.EmailNotVerified;
-				}
-
-				return SignInStatus.Faild;
+				return tuples;
 			}
 		}
 

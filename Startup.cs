@@ -1,5 +1,6 @@
 using company_delta_flow_task_blazor.Data;
 using company_delta_flow_task_blazor.Data.Providers;
+using company_delta_flow_task_blazor.Services;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,6 +27,7 @@ namespace company_delta_flow_task_blazor
 			services.AddServerSideBlazor();
 			services.AddHttpContextAccessor();
 
+			services.AddSingleton<UserStateService>();
 			services.AddSingleton<IUserProvider, UserProvider>();
 			services.AddSingleton<IQuizProvider, QuizProvider>();
 		}

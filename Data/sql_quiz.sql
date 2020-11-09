@@ -38,7 +38,7 @@ select * from delta_user
 --)
 
 --insert into delta_question(name, Description, QuizId)
---values('test quiz', 'test quiz', 1)
+--values('test delta_question', 'test delta_question', 1)
 
 --create table delta_answer(
 --Id bigint identity(1,1) primary key not null,
@@ -50,7 +50,7 @@ select * from delta_user
 --)
 
 --insert into delta_answer(name, Description, IsCorrect, QuestionId)
---values('test quiz', 'test quiz', 0, 1)
+--values('test quiz', 'test quiz', 0, 3)
 
 --create table delta_user_quiz_result(
 --Id bigint identity(1,1) primary key not null,
@@ -74,18 +74,31 @@ select * from delta_user
 -- IsExpired, UserId, QuizId)
 --values(0, 9, 1)
 
-create PROCEDURE usp_getQuizByUserId (
-	@UserId bigint
-	)
-AS
-BEGIN
-	select * from delta_configure_user_quiz qu
-	left join delta_quiz q on qu.QuizId = q.Id
-	left join delta_question dq on q.Id = dq.QuizId
-	left join delta_answer a on dq.Id = a.Id
-	 where UserId = 9 and isexpired = 0
-END
+--alter PROCEDURE usp_getQuizByUserId (
+--	@UserId bigint
+--	)
+--AS
+--BEGIN
+--	select da.Id As 'AnswerId', da.name as 'Answer', da.IsCorrect,
+--	dq.Id as 'QuestionId', dq.Name as 'Question', dq.Description as 'QuestionDetails',
+--	d.Id as 'QuizId', d.Name as 'Quiz Name', d.PassPercentage,
+--	uq.UserId as 'UserId' from delta_answer da
+--left join delta_question dq on da.QuestionId = dq.Id
+--left join delta_quiz d on dq.QuizId = d.Id
+--left join delta_configure_user_quiz uq on uq.QuizId = d.Id
+--where uq.UserId = @UserId and uq.isexpired = 0
+--END
 
 select * from delta_quiz
 select * from delta_answer
 select * from delta_user
+exec usp_getQuizByUserId 9
+
+select da.Id As 'AnswerId', da.name as 'Answer', da.IsCorrect,
+	dq.Id as 'QuestionId', dq.Name as 'Question', dq.Description as 'QuestionDetails',
+	d.Id as 'QuizId', d.Name as 'QuizName', d.PassPercentage,
+	uq.UserId as 'UserId' from delta_answer da
+left join delta_question dq on da.QuestionId = dq.Id
+left join delta_quiz d on dq.QuizId = d.Id
+left join delta_configure_user_quiz uq on uq.QuizId = d.Id
+where uq.UserId = 9 and uq.isexpired = 0

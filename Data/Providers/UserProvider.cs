@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using company_delta_flow_task_blazor.Common;
+using company_delta_flow_task_blazor.Services;
 using company_delta_flow_task_blazor.ViewModels;
 
 using Microsoft.AspNetCore.Http;
@@ -42,6 +43,7 @@ namespace company_delta_flow_task_blazor.Data.Providers
 					while (await reader.ReadAsync(cancellationToken))
 					{
 						user = new UserViewModel();
+						user.Id = Convert.ToInt64(reader["Id"]);
 						user.FullName = reader["FullName"].ToString();
 						user.Email = reader["Email"].ToString();
 						user.Gender = reader["Gender"].ToString();
@@ -231,7 +233,7 @@ namespace company_delta_flow_task_blazor.Data.Providers
 			}
 		}
 
-		private async Task<UserViewModel> GetUserByEmail(string email, CancellationToken cancellationToken = default)
+		public async Task<UserViewModel> GetUserByEmail(string email, CancellationToken cancellationToken = default)
 		{
 			UserViewModel user = null;
 

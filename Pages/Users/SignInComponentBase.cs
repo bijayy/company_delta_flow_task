@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 using company_delta_flow_task_blazor.Common;
 using company_delta_flow_task_blazor.Data.Providers;
+using company_delta_flow_task_blazor.Services;
 using company_delta_flow_task_blazor.ViewModels;
 
 using Microsoft.AspNetCore.Components;
@@ -18,6 +19,9 @@ namespace company_delta_flow_task_blazor.Pages.Users
 		protected IUserProvider userProvider { get; set; }
 
 		[Inject]
+		protected UserStateService userStateService { get; set; }
+
+		[Inject]
 		protected NavigationManager navigationManager { get; set; }
 
 		protected SignInViewModel signInViewModel { get; set; }
@@ -29,6 +33,8 @@ namespace company_delta_flow_task_blazor.Pages.Users
 
 		protected async override Task OnInitializedAsync()
 		{
+			this.userStateService.OnChange += this.StateHasChanged;
+
 			this.signInViewModel = new SignInViewModel();
 			this.isInProgress = false;
 			await base.OnInitializedAsync();
@@ -38,11 +44,16 @@ namespace company_delta_flow_task_blazor.Pages.Users
 		{
 			this.isInProgress = true;
 			status = await this.userProvider.SignInAsync(signInViewModel, cancellationTokenSource.Token);
-			this.IsSuccess = SignInStatus.Success == status;
+			var user = await this.userProvider.GetUserByEmail(signInViewModel.Email);
+
+			this.IsSuccess = SignInStatus.Success == status && user != null;
 
 			if (this.IsSuccess)
 			{
-				this.navigationManager.NavigateTo($"{LocalUrl.TakeQuiz}", true);
+				this.userStateService.UserId = user.Id;
+				this.userStateService.NotifyStateChanged();
+
+				this.navigationManager.NavigateTo($"{LocalUrl.TakeQuiz}", false);
 			}
 
 			this.IsInit = false;

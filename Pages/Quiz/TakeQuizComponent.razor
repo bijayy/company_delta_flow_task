@@ -1,8 +1,38 @@
 ﻿@page "/quiz/take"
 @inherits TakeQuizComponentBase
 
-<h3>TakeQuizComponent</h3>
+<h3>Take Quiz</h3>
 
-@code {
+<div>
+	<div>
+		<b>@this.currentQuestion.Name</b>
+	</div>
+	<div>
+		@this.currentQuestion.Description
+	</div>
+	@{
+		var answers = this.quizTupleList.Item3.Where(x => currentQuestion.Id == x.QuestionId).ToList();
+	}
 
-}
+	<div>
+		@foreach (var answer in answers)
+		{
+			<input type="radio" id="@answer.Id" @onchange="@((e) => this.OnAnswerSelected(e))" value="@answer.Name" />
+		}
+	</div>
+
+	<div>
+		<input type="button" @onclick="@(() => this.Previous())" value="Previous" />
+		<input type="button" @onclick="@(() => this.Next())" value="Next" />
+	</div>
+	<div>
+		<input type="button" @onclick="@(() => this.SubmitAnswer())" value="Next" />
+	</div>
+	<div>
+		Total Questions: @quizTupleList.Item2.Count
+		Total Attempted Questions: @(rightAnswers.Count + wrongAnswers.Count)
+		Total Not Attempted Questions: @(quizTupleList.Item2.Count - rightAnswers.Count + wrongAnswers.Count)
+		Total Right Answers: @rightAnswers.Count
+		Total Wrong Answers: @wrongAnswers
+	</div>
+</div>
