@@ -1,1 +1,9 @@
-﻿<div class="spinner"></div>
+﻿@if (this.IsShow)
+{
+	<div class="spinner"></div>
+}
+
+@code {
+	[Parameter]
+	public bool IsShow { get; set; }
+}

@@ -4,6 +4,8 @@
 @inject IUserProvider userProvider 
 @inject NavigationManager navigationManager 
 
+<HourGlassTemplate IsShow="this.isEmailVerifiying" />
+
 <MessageTemplate IsSucess="this.isEmailVerified"
 				 Success="Email verified. You can login now and take your quiz."
 				 IsError="!this.isEmailVerified"

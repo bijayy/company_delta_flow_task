@@ -2,6 +2,8 @@
 @layout NoMenuLayout
 @inherits SignUpComponentBase;
 
+<HourGlassTemplate IsShow="this.IsInProgress" />
+
 <FormTemplate Title="Sign Up"
 			  Model="@this.signUpViewModel"
 			  SubmitButtonTitle="Please click here to sign up in to this portal."

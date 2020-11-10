@@ -1,6 +1,8 @@
 ﻿@page "/quiz/take"
 @inherits TakeQuizComponentBase
 
+<HourGlassTemplate IsShow="this.isInProgress" />
+
 <h3>Take Quiz</h3>
 
 @if (this.quizTupleList != null)
@@ -10,12 +12,12 @@
 		<div>
 			@if (this.answeredQuestions.Count <= 5)
 			{
-				<div class="bg-danger center">
+				<div class="bg-danger text-center">
 					Please attend more than 5 questions to submit quiz.
 				</div>
 			}
 			<div>
-				<b>@this.currentQuestion.Name</b>
+				<b>@(this.questionNumber + ") " + this.currentQuestion.Name)</b>
 			</div>
 			<div>
 				@this.currentQuestion.Description

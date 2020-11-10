@@ -3,6 +3,8 @@
 @layout NoMenuLayout
 @inherits SignInComponentBase
 
+<HourGlassTemplate IsShow="this.isInProgress" />
+
 <FormTemplate Title="@("Sign In")"
 			  Model="@signInViewModel"
 			  SubmitButtonText="Sign In"

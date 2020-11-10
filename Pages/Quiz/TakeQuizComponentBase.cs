@@ -33,6 +33,7 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 		protected List<long> wrongAnswers { get; set; } = new List<long>();
 		protected List<Question> answeredQuestions { get; set; } = new List<Question>();
 		protected int totalAttemptedQuestion { get; set; }
+		protected int questionNumber { get; set; } = 1;
 		protected bool IsInit { get; set; } = true;
 		protected bool IsSuccess { get; set; }
 		protected bool isCalculated { get; set; }
@@ -65,10 +66,12 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 			if (this.quizTupleList.Item2.Count == index + 1)
 			{
 				this.currentQuestion = this.quizTupleList.Item2[0];
+				this.questionNumber = 1;
 			}
 			else
 			{
 				this.currentQuestion = this.quizTupleList.Item2[index + 1];
+				this.questionNumber = index + 2;
 			}
 
 			this.userStateService.SelectedRadioButton = this.answeredQuestions.FirstOrDefault(x => x.Id == this.currentQuestion.Id)?.Answer.Id ?? 0;
@@ -81,10 +84,12 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 			if (index == 0)
 			{
 				this.currentQuestion = this.quizTupleList.Item2[this.quizTupleList.Item2.Count - 1];
+				this.questionNumber = this.quizTupleList.Item2.Count;
 			}
 			else
 			{
 				this.currentQuestion = this.quizTupleList.Item2[index - 1];
+				this.questionNumber = index;
 			}
 
 			this.userStateService.SelectedRadioButton = this.answeredQuestions.FirstOrDefault(x => x.Id == this.currentQuestion.Id)?.Answer.Id ?? 0;
@@ -134,6 +139,7 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 
 		protected async Task SubmitAnswer()
 		{
+			this.isInProgress = true;
 			this.isCalculated = false;
 			this.totalAttemptedQuestion = this.answeredQuestions.Count;
 
@@ -149,6 +155,7 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 				}, cancellationTokenSource.Token);
 
 				this.isCalculated = isSuccess;
+				this.isInProgress = false;
 			}
 		}
 
