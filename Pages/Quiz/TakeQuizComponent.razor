@@ -8,7 +8,7 @@
 	@if (!this.isCalculated)
 	{
 		<div>
-			@if (this.rightAnswers.Count + wrongAnswers.Count <= 5)
+			@if (this.answeredQuestions.Count <= 5)
 			{
 				<div class="bg-danger center">
 					Please attend more than 5 questions to submit quiz.
@@ -33,7 +33,7 @@
 				<input type="button" @onclick="@(() => this.Previous())" value="Previous" />
 				<input type="button" @onclick="@(() => this.Next())" value="Next" />
 			</div>
-			@if (this.rightAnswers.Count + wrongAnswers.Count > 5)
+			@if (this.answeredQuestions.Count > 5)
 			{
 				<div>
 					<input type="button" @onclick="@(() => this.SubmitAnswer())" value="Submit" />
@@ -54,10 +54,10 @@
 				<b>Total Questions:</b> @quizTupleList.Item2.Count
 			</div>
 			<div>
-				<b>Total Attempted Questions:</b> @(rightAnswers.Count + wrongAnswers.Count)
+				<b>Total Attempted Questions:</b> @this.answeredQuestions.Count
 			</div>
 			<div>
-				<b>Total Not Attempted Questions:</b> @(quizTupleList.Item2.Count - rightAnswers.Count + wrongAnswers.Count)
+				<b>Total Not Attempted Questions:</b> @(quizTupleList.Item2.Count - this.answeredQuestions.Count)
 			</div>
 			<div>
 				<b>Total Right Answers:</b> @rightAnswers.Count

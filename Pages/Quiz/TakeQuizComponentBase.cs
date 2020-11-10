@@ -31,7 +31,7 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 		protected QuestionViewModel currentQuestion { get; set; } = new QuestionViewModel();
 		protected List<long> rightAnswers { get; set; } = new List<long>();
 		protected List<long> wrongAnswers { get; set; } = new List<long>();
-		protected List<string> selectedAnswers { get; set; } = new List<string>();
+		protected List<Question> answeredQuestions { get; set; } = new List<Question>();
 		protected int totalAttemptedQuestion { get; set; }
 		protected bool IsInit { get; set; } = true;
 		protected bool IsSuccess { get; set; }
@@ -71,7 +71,7 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 				this.currentQuestion = this.quizTupleList.Item2[index + 1];
 			}
 
-			this.userStateService.SelectedRadioButton = this.quizTupleList.Item3.Select(x => x.Id).Where(x => this.selectedAnswers.Any(y => y.Split('-')[1] == x.ToString())).FirstOrDefault();
+			this.userStateService.SelectedRadioButton = this.answeredQuestions.FirstOrDefault(x => x.Id == this.currentQuestion.Id)?.Answer.Id ?? 0;
 		}
 
 		protected void Previous()
@@ -87,13 +87,13 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 				this.currentQuestion = this.quizTupleList.Item2[index - 1];
 			}
 
-			this.userStateService.SelectedRadioButton = this.quizTupleList.Item3.Select(x => x.Id).Where(x => this.selectedAnswers.Any(y => y.Split('-')[1] == x.ToString())).FirstOrDefault();
+			this.userStateService.SelectedRadioButton = this.answeredQuestions.FirstOrDefault(x => x.Id == this.currentQuestion.Id)?.Answer.Id ?? 0;
 		}
 
 		protected void OnAnswerSelected(AnswerViewModel e)
 		{
 			if (this.quizTupleList.Item3
-	.Any(x => x.QuestionId == this.currentQuestion.Id && x.Id == e.Id && x.IsCorrect))
+				.Any(x => x.QuestionId == this.currentQuestion.Id && x.Id == e.Id && x.IsCorrect))
 			{
 				if (!this.rightAnswers.Any(x => x == this.currentQuestion.Id))
 				{
@@ -120,14 +120,22 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 			}
 
 			this.userStateService.SelectedRadioButton = e.Id;
-			this.selectedAnswers.RemoveAll(x => x.Split('-')[0] == this.currentQuestion.Id.ToString());
-			this.selectedAnswers.Add($"{this.currentQuestion.Id}-{e.Id}");
+			this.answeredQuestions.RemoveAll(x => x.Id == this.currentQuestion.Id);
+
+			this.answeredQuestions.Add(new Question
+			{
+				Id = this.currentQuestion.Id,
+				Answer = new Answer
+				{
+					Id = e.Id
+				}
+			});
 		}
 
 		protected async Task SubmitAnswer()
 		{
 			this.isCalculated = false;
-			this.totalAttemptedQuestion = this.rightAnswers.Count + this.wrongAnswers.Count;
+			this.totalAttemptedQuestion = this.answeredQuestions.Count;
 
 			if(this.totalAttemptedQuestion > 5)
 			{
@@ -150,6 +158,16 @@ namespace company_delta_flow_task_blazor.Pages.Quiz
 			this.userStateService.SelectedRadioButton = 0;
 			this.navigationManager.NavigateTo(LocalUrl.SignIn, true);
 		}
+	}
 
+	public class Question
+	{
+		public long Id { get; set; }
+		public Answer Answer { get; set; }
+	}
+
+	public class Answer
+	{
+		public long Id { get; set; }
 	}
 }
